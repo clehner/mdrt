@@ -62,8 +62,25 @@ var handleClient = function(client) {
 server.on('clientAuthed', handleClient);
 server.listen();
 
+var broadcast = function(text, cb) {
+  sockets.forEach(function(socket) {
+    socket.send(text, cb);
+  });
+}
 
-var wss = new WebSS( {'port': 9091} );
+var httpServer = http.createServer(function(req, res) {
+  var url = req.url;
+  if (url === '/')
+    fs.createReadStream('./app.html').pipe(res);
+  else if (url === '/github.css')
+    fs.createReadStream('./github.css').pipe(res);
+  else
+    res.end();
+});
+
+httpServer.listen(9090);
+
+var wss = new WebSS( {server: httpServer} );
 var sockets = [];
 var md = '';
 
@@ -76,19 +93,3 @@ wss.on('connection', function(ws) {
     sockets.splice(sockets.indexOf(ws), 1);
   });
 });
-
-var broadcast = function(text, cb) {
-  sockets.forEach(function(socket) {
-    socket.send(text, cb);
-  });
-}
-
-var httpServer = http.createServer(function(req, res) {
-  var url = req.url;
-  if (url !== '/')
-    res.end()
-  else
-    fs.createReadStream('./app.html').pipe(res);
-});
-
-httpServer.listen(9090);
