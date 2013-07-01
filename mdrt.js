@@ -6,7 +6,7 @@ var marked = require('marked');
 var fs     = require('fs');
 
 var fname = process.argv[2];
-var server = new nb.VimServer({'port': 8080, 'debug': true});
+var server = new nb.VimServer();
 
 // debounce, by John Hann
 // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
@@ -70,12 +70,10 @@ var broadcast = function(text, cb) {
 
 var httpServer = http.createServer(function(req, res) {
   var url = req.url;
-  if (url === '/')
-    fs.createReadStream('./app.html').pipe(res);
-  else if (url === '/github.css')
-    fs.createReadStream('./github.css').pipe(res);
-  else
+  if (url !== '/')
     res.end();
+  else
+    fs.createReadStream('./app.html').pipe(res);
 });
 
 httpServer.listen(9090);
