@@ -3,7 +3,7 @@
     <script type="text/javascript">
       var init = function() {
         var content = document.getElementById("md-content");
-        var url = 'ws://' + location.hostname + ':9090';
+        var url = 'ws://' + location.host;
         var conn = new WebSocket(url);
 
         conn.onerror = function(err) {

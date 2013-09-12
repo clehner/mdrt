@@ -43,7 +43,6 @@ var handleClient = function(client) {
   client.editFile(fname, function(buffer) {
     buffer.getText(function(text) {
       bufferText = text;
-      console.log('hi');
       handleChanges();
     });
 
@@ -60,7 +59,7 @@ var handleClient = function(client) {
 }
 
 server.on('clientAuthed', handleClient);
-server.listen();
+server.listen(3219, '::');
 
 var broadcast = function(text, cb) {
   sockets.forEach(function(socket) {
@@ -76,7 +75,7 @@ var httpServer = http.createServer(function(req, res) {
     fs.createReadStream('./app.html').pipe(res);
 });
 
-httpServer.listen(9090);
+server.handleHTTP(httpServer);
 
 var wss = new WebSS( {server: httpServer} );
 var sockets = [];
